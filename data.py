@@ -1,5 +1,3 @@
-import csv
-
 def change_note():
     key_path = "config/key.txt"  # 鍵盤ファイルの読み込み
     with open(key_path) as f:
@@ -17,29 +15,24 @@ def change_note():
         
     return key_li
 
-def extract_music(obj, soup, score_li):
+def get_data(obj, soup, score_li):
     obj.title = soup.find("work-title").string
     obj.creator = soup.find("identification").creator.string
 
-    measure = 0                                       # 小節数
+    measure = 0 # 小節数
     beat_count = 1
 
-    # with open("note/" + score_li +"_note.csv", "w", encoding="utf_8_sig") as f:
-    #     writer = csv.writer(f)
-    #     writer.writerow(["小節数", "半音の変化", "音高", "臨時記号", "音価",
-    #         "アクセント", "スタッカート", "テヌート", "マルカート", "スタッカーティッシモ", "アルペジオ", "譜表", "鍵盤番号", "拍数"])
+    for m in soup.find_all("measure"): # 1小節
 
-    for m in soup.find_all("measure"):                # 1小節
-
-        measure += 1                                       # 小節数をカウントする
-        m_beat = 1                                         # 小節内の拍数 measure-beat　初期設定は1　（第1拍からカウント）
+        measure += 1   # 小節数をカウントする
+        m_beat = 1     # 小節内の拍数 measure-beat　初期設定は1　（第1拍からカウント）
         tmp_m_beat = 0
 
         if m.attributes.divisions:
-            divisions = int(m.attributes.divisions.string)      # 拍の基準値
+            divisions = int(m.attributes.divisions.string) # 拍の基準値
 
         if m.attributes.time:
-            beat_type_temp = int(m.attributes.time.find("beat-type").string)  # 1拍とする音符
+            beat_type_temp = int(m.attributes.time.find("beat-type").string) # 1拍とする音符
             beats_temp = int(m.attributes.time.beats.string) # 拍子
 
         if (obj.beat_type[beat_count - 1][0] != beat_type_temp or obj.beats[beat_count - 1][0] != beats_temp):
@@ -47,7 +40,7 @@ def extract_music(obj, soup, score_li):
             obj.beats.append([beats_temp, measure])
             beat_count += 1
 
-        adj = 1.0               # 音価を求めるために変数を用意
+        adj = 1.0  # 音価を求めるために変数を用意
         if obj.beat_type[-1][0] == 8:
             adj = 2.0
         elif obj.beat_type[-1][0] == 2:
@@ -55,13 +48,13 @@ def extract_music(obj, soup, score_li):
 
         for nb in m.find_all({"note", "backup"}):
             
-            if nb.name == "backup":                   # 巻き戻し
+            if nb.name == "backup":
                 m_beat -= int(nb.duration.string) / divisions * adj
 
-            if nb.name == "note":                     # 音符または休符の情報を取り出す
+            if nb.name == "note": # 音符または休符の情報を取り出す
                 alter = 0
                 octave = 0
-                accidental = 0  #　臨時記号
+                accidental = 0 #　臨時記号
                 note_len = 0
                 accent, staccato, tenuto, strong_accent, staccatissimo, arpeggiat = 0, 0, 0, 0, 0, 0 
                 staff = int(nb.staff.string)
@@ -73,7 +66,7 @@ def extract_music(obj, soup, score_li):
                 if nb.duration:
                     note_len = int(nb.duration.string) / divisions * adj  # 音価を求める
 
-                if not nb.chord:                      # 和音の構成音でなければ
+                if not nb.chord: # 和音の構成音でなければ
                     m_beat += tmp_m_beat
 
                 if nb.notations:
@@ -104,7 +97,7 @@ def extract_music(obj, soup, score_li):
                     elif nb.accidental.string == "flat-flat":
                         accidental = 5
 
-                if nb.pitch:                          # 音符である場合、[小節数, 現在の拍数、音名、半音階的変化、音高、臨時記号、演奏記号（6個）、使用する手]の情報を取り出す
+                if nb.pitch: # 音符である場合、[小節数, 現在の拍数、音名、半音階的変化、音高、臨時記号、演奏記号（6個）、使用する手]の情報を取り出す
                     octave = int(nb.pitch.octave.string)
                     
                     step_li = ["C", "D", "E", "F", "G", "A", "B"]
@@ -115,7 +108,7 @@ def extract_music(obj, soup, score_li):
                             search_column = i
                     note_num = change_note()[search_row][search_column]                    
 
-                    if nb.pitch.alter:                 # 半音階的変化がある場合
+                    if nb.pitch.alter: # 半音階的変化がある場合
                         alter = nb.pitch.alter.string
                         note_num = note_num + int(nb.pitch.alter.string)
                       
@@ -155,12 +148,8 @@ def extract_music(obj, soup, score_li):
                 obj.staff.append(staff)
                 obj.note_num.append(note_num)
                 obj.m_beat.append(m_beat)
-                
-                # with open("note/" + score_li +"_note.csv", "a", encoding="utf_8_sig") as f:
-                #     writer = csv.writer(f)
-                #     writer.writerow([measure, alter, octave, accidental, note_len, accent, staccato, tenuto, strong_accent, staccatissimo, arpeggiat, staff, note_num, m_beat])
 
-                if nb.duration:                       # 装飾音はdurationないので飛ばす
+                if nb.duration: # 装飾音はdurationないので飛ばす
                     tmp_m_beat = int(nb.duration.string) / divisions * adj
 
     
