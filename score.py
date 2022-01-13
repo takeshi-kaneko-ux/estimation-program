@@ -130,21 +130,3 @@ class Score:
 
     def get_measurenum(self): # 総小節数を得る
         return max(self.__measure)
-    
-    # def separate_data(self):
-    #     data_r, data_l = [], []
-    #     for i in range(len(self.__note_num)):
-    #         if self.__note_num[i] != -1: # 休符を取り除く
-    #             data_set = [self.__measure[i], self.__alter[i], self.__octave[i], self.__accidental[i], 
-    #                         self.__note_len[i], self.__accent[i], self.__staccato[i], self.__tenuto[i],
-    #                         self.__strong_accent[i], self.__staccatissimo[i], self.__arpeggiat[i],
-    #                         self.__note_num[i], self.__m_beat[i]]
-    #             if self.__staff[i] == 1:
-    #                 data_r.append(data_set)
-    #             elif self.__staff[i] == 2:
-    #                 data_l.append(data_set)
-        
-    #     return data_r, data_l
-            
-    
-    
