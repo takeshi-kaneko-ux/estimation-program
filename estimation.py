@@ -9,7 +9,6 @@ import csv
 
 # 半教師あり学習を実行->True, 教師あり学習を実行->False
 flag = True
-# flag = False
 
 # 閾値
 label_theta = 0.9
@@ -19,14 +18,13 @@ num1 = 0
 num2 = 1
 
 # 教師ありデータがまとめられたcsvファイル
-file_name1 = "data/features.csv"
+file_name1 = "data/featuresS.csv"
 
 # 教師なしデータがまとめられたcsvファイル
-file_name2 = "data/features_notlabel.csv"
+file_name2 = "data/featuresU.csv"
 
 # 新規データがまとめられたcsvファイル
-file_name3 = "data/new_features.csv"
-
+file_name3 = "data/featuresN.csv"
 
 
 # データ読み込み、データフレーム作成
