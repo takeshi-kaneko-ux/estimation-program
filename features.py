@@ -1,12 +1,7 @@
 import numpy as np
-import matplotlib.pyplot as plt
-import pandas as pd
-
-import csv
-
-import data # 黒鍵の特徴量を作成する際にimportする
-
 import copy
+
+import data
 
 def get_data(obj, obj_var, rest = -3):
     var_li = [[], []]
@@ -228,5 +223,3 @@ def Features(obj, score_li):
         f_li.append(0)
 
     return f_li
-
-    
