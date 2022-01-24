@@ -53,7 +53,7 @@ rf.fit(X_train, y_train)
 if not flag: # 教師あり学習で学習したモデルrfで推定
     # 学習モデルの評価
     y_test_pred = rf.predict(X_test)
-    score = f1_score(y_test, y_test_pred, average='micro')
+    score = f1_score(y_test, y_test_pred, average="macro")
 
     # 新規データの難易度を推定
     y_pred = rf.predict(x3.values)
@@ -90,7 +90,7 @@ else: # 半教師あり学習で学習したモデルrf2で推定
 
     # 学習モデル評価
     y_test_pred2 = rf2.predict(X_test)
-    score = f1_score(y_test, y_test_pred2, average='micro')
+    score = f1_score(y_test, y_test_pred2, average="macro")
 
     # 新規データの難易度を推定
     y_pred = rf2.predict(x3.values)
